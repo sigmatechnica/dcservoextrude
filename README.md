@@ -1,7 +1,7 @@
 dcservodrive
 ============
 
-Arduino sketch to turn step / direction signals into DC servo motor position control - 'stepper simulator' 
+Arduino sketch to drive an extruder for a FDM 3D printer fitted with a DC motor and quadrature encoder with step / direction signals like it is a stepper motor.  Based on  https://github.com/cswiger/dcservodrive
 
 Requires libraries:
 FlexiTimer2.h   http://playground.arduino.cc/Main/FlexiTimer2<br/>
