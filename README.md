@@ -1,4 +1,4 @@
-dcservodrive
+dcservoextrude
 ============
 
 Arduino sketch to drive an extruder for a FDM 3D printer fitted with a DC motor and quadrature encoder with step / direction signals like it is a stepper motor.  Based on  https://github.com/cswiger/dcservodrive
