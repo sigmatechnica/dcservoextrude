@@ -1,17 +1,19 @@
-/* Arduino sketch to controll a 3D printer extruder with DC motor and quadrature encoder like it is a stepper motor.
-   contains code to controll the motor, hotend temperature and a fan.  Also has diagnotic features.
-   
-   Designed to run on a Pro mini and be mounted on the extruder itsself.
+/* Arduino sketch to take Step & Direction signals from a gcode interpreter (such as a tinyg) and drives
+   a dc servo motor with encoder feedback using a Sparkfun Ardumoto shield. This sketch is customized for Two
+   motors called X and Z and needs a mega2650 - a single motor version should work on a Uno.
    
    pins are - encoder inputs:
    XPinA 18 // interrupt 5
    XPinB 22
+   ZPinA 20  // interrupt 3
+   ZPinB 24
    
    Step & direction inputs:
    stepXpin 19
+   stepZpin 21
    dirXpin 23
+   dirZpin 25
    
-   ****under development not yet functional****
    */
    
 
@@ -21,7 +23,7 @@
 #include <PID_v1.h>
 // use the adafruit motor control library for managing the DC motor
 // Depending - a version of this has been hacked to work with the beefier Ardumoto shield.
-//#include <AFMotor.h>
+#include <AFMotor.h>
 // quadrature encoder library
 #include <Encoder.h>
 
@@ -52,7 +54,7 @@ double oldPositionX = 0;
 double KP_X = 8; //position multiplier (gain)
 double KI_X = 4.0; // Intergral multiplier (gain) - was 0.05 - use 0 for testing, simple P controller
 double KD_X = .03; // derivative multiplier (gain)
-
+//
 //double KP_Z = 2;
 //double KI_Z = 8.0;
 //double KD_Z = .01;
@@ -76,18 +78,18 @@ Encoder XEnc(encoderXPinA, encoderXPinB);
 //Encoder ZEnc(encoderZPinA, encoderZPinB);
 
 void setup() {
-
+digitalWrite(7, HIGH);
   // needed only for debugging
   Serial.begin(115200);
 
   pinMode(stepXpin, INPUT);
-  //pinMode(stepZpin, INPUT);
+//  pinMode(stepZpin, INPUT);
   pinMode(dirXpin, INPUT);
- // pinMode(dirZpin, INPUT);  
+//  pinMode(dirZpin, INPUT);  
 
   // the stepper simulator
   attachInterrupt(4, doXstep, RISING);  // pin 19 interrupt X step 
- // attachInterrupt(2, doZstep, RISING);  // pin 21 interrupt Z step
+//  attachInterrupt(2, doZstep, RISING);  // pin 21 interrupt Z step
   
   // we want direction also, change from default 0 to 255 to -255 to 255
   myPID_X.SetOutputLimits(-255,255);
@@ -159,10 +161,12 @@ void doPID() {
 //  int directionZ;
   
   if(ms_X > 0){
-    directionX = FORWARD;
-  }
+ analogWrite(5, ms_X); 
+    //    directionX = FORWARD;
+}
   if(ms_X < 0){
-    directionX = BACKWARD;
+ analogWrite(6, ms_X); 
+    //    directionX = BACKWARD;
   }
   
 //  if(ms_Z > 0) {
@@ -171,10 +175,11 @@ void doPID() {
 //  if(ms_Z < 0) {
 //    directionZ = BACKWARD;
 //  }
-  
-  motorX.setSpeed(abs(int(ms_X)));
+// analogWrite(5, ms_X); 
+ // analogWrite(6, ms_X); 
+//  motorX.setSpeed(abs(int(ms_X)));
 //  motorZ.setSpeed(abs(int(ms_Z)));
-  motorX.run(directionX);
+//  motorX.run(directionX);
 //  motorZ.run(directionZ);
 }
 
